@@ -1,40 +1,560 @@
 <!DOCTYPE html>
 <html lang="en">
-    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evan | Engineering Portfolio (Protected)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <title>Portfolio Website</title>
-</head>
-<body>
-    <header>
-        <a href="#" class="logo">Evan</a>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-decoration: none;
+        }
 
-        <nav>
-            <a href="#" class="active"> Home</a>
-            <a href="#" >Skills</a>
-            <a href="#" >Education</a>
-            <a href="#" >Experience</a>
-            <a href="#" >Contact</a>
-        </nav>
-    </header>
-    <section class="home">
-        <div class="home-img">
-            <img src="images.jpg" alt="">
-        </div>
-        <div class="home-content">
-            <h1>Hi, It's <span>Evan</span></h1>
-            <h3 class="typing-text">I'm a <span></span></h3>
-            <p>I am an undergraduate student studying Electrical and Electronics Engineering at NIT Trichy. Right now, my focus sits at the intersection of core hardware fundamentals and analytical problem-solving. My objective is to push past standard coursework—moving beyond passive derivation and into the actual design and debugging of complex electrical systems. I want to build hardware and architectures that do not just meet specifications, but redefine them.</p>
-            <div class="social-icons">
-                <a href="https://www.linkedin.com/in/evanrony1/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin"></i></a>
-                <a href="https://github.com/evanrony1" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i></a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        body {
+            background: #081b29;
+            color: #ededed;
+            min-height: 100vh;
+        }
+
+        body.auth-pending {
+            overflow: hidden;
+        }
+
+        /* --- AUTHENTICATION SCREEN --- */
+        .auth-container {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #081b29;
+            z-index: 9999;
+            padding: 1.5rem;
+        }
+
+        .auth-card {
+            background: #112e42;
+            border: 1px solid rgba(0, 238, 255, 0.3);
+            border-radius: 8px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 0 25px rgba(0, 238, 255, 0.15);
+        }
+
+        .auth-header h2 {
+            color: #ededed;
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #9cb1c2;
+            font-size: 0.85rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            color: #00eeff;
+            margin-bottom: 0.4rem;
+        }
+
+        .input-group input {
+            background: #081b29;
+            border: 1px solid #323946;
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            color: #fff;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #00eeff;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.8rem;
+            background: #00eeff;
+            color: #081b29;
+            border: none;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .status-message {
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            min-height: 1.2rem;
+            color: #ff5252;
+        }
+
+        .demo-credentials-callout {
+            margin-top: 1.5rem;
+            padding-top: 1.2rem;
+            border-top: 1px dashed rgba(255, 255, 255, 0.15);
+            font-size: 0.8rem;
+            color: #8c9ba5;
+        }
+
+        .demo-credentials-callout code {
+            background: #081b29;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            color: #00eeff;
+        }
+
+        /* --- SHELL & NAVIGATION --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 9%;
+            background: rgba(8, 27, 41, 0.95);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 238, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.7rem;
+            color: #ededed;
+            font-weight: 700;
+        }
+
+        nav a {
+            font-size: 1.1rem;
+            color: #ededed;
+            margin-left: 2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: #00eeff;
+        }
+
+        .nav-logout-btn {
+            background: transparent;
+            border: 1px solid #ff5252;
+            color: #ff5252;
+            padding: 0.4rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 2rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .nav-logout-btn:hover {
+            background: #ff5252;
+            color: #fff;
+        }
+
+        .tab-section {
+            display: none;
+            min-height: 100vh;
+            padding: 7rem 9% 3rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tab-section.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HOME TAB --- */
+        #tab-home {
+            align-items: center;
+            gap: 4rem;
+        }
+
+        .home-img img {
+            width: 280px;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #00eeff;
+            box-shadow: 0 0 25px rgba(0, 238, 255, 0.4);
+        }
+
+        .home-content {
+            max-width: 600px;
+        }
+
+        .session-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #00eeff;
+            border: 1px solid #00eeff;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .home-content h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .home-content h1 span {
+            color: #00eeff;
+        }
+
+        .home-content h3 {
+            font-size: 1.6rem;
+            color: #00eeff;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .home-content p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #c4d1db;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 2px solid #00eeff;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            color: #00eeff;
+            margin-right: 1rem;
+            transition: 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            background: #00eeff;
+            color: #081b29;
+            box-shadow: 0 0 15px #00eeff;
+        }
+
+        .section-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            color: #ededed;
+        }
+
+        .section-header h2 span {
+            color: #00eeff;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .card {
+            background: #112e42;
+            border: 1px solid rgba(0, 238, 255, 0.15);
+            border-radius: 8px;
+            padding: 1.8rem;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #00eeff;
+        }
+
+        .card h3 {
+            color: #00eeff;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card .card-subtitle {
+            color: #8c9ba5;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p, .card ul {
+            color: #c4d1db;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .card ul {
+            list-style-position: inside;
+            padding-left: 0.5rem;
+        }
+
+        .card ul li {
+            margin-bottom: 0.4rem;
+        }
+
+        .card-flex {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="auth-pending">
+
+    <!-- LOGIN SCREEN -->
+    <div id="auth-wall" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Candidate Access Portal</h2>
+                <p>Technical Evaluation Round &mdash; NIT Trichy Portfolio</p>
             </div>
-        
+            
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="eval-id">Reviewer ID</label>
+                    <input type="text" id="eval-id" placeholder="reviewer@eval.org" value="reviewer@eval.org" required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="eval-key">Access Key</label>
+                    <input type="password" id="eval-key" placeholder="selection2026" value="selection2026" required autocomplete="current-password">
+                </div>
+                <div id="auth-feedback" class="status-message"></div>
+                <button type="submit" id="login-submit-btn" class="btn-primary">Authenticate Session</button>
+            </form>
+            
+            <div class="demo-credentials-callout">
+                <p><strong>Evaluation Note:</strong> Default testing values are pre-filled.</p>
+                <code>reviewer@eval.org</code> / <code>selection2026</code>
+            </div>
         </div>
-    </section>
+    </div>
+
+    <!-- PROTECTED PORTFOLIO SHELL -->
+    <div id="portfolio-app" style="display: none;">
+        <header>
+            <a href="javascript:void(0)" class="logo" data-target="tab-home">Evan</a>
+            <nav id="navbar-links">
+                <a href="javascript:void(0)" class="nav-tab active" data-target="tab-home">Home</a>
+                <a href="javascript:void(0)" class="nav-tab" data-target="tab-skills">Skills</a>
+                <a href="javascript:void(0)" class="nav-tab" data-target="tab-education">Education</a>
+                <a href="javascript:void(0)" class="nav-tab" data-target="tab-experience">Experience</a>
+                <button id="logout-btn" class="nav-logout-btn">Log Out</button>
+            </nav>
+        </header>
+
+        <!-- 1. HOME TAB -->
+        <section id="tab-home" class="tab-section active">
+            <div class="home-img">
+                <img src="images.jpg" alt="Evan" onerror="this.src='https://via.placeholder.com/280x280/112e42/00eeff?text=Evan'">
+            </div>
+            <div class="home-content">
+                <div class="session-badge"><i class="fa-solid fa-lock-open"></i> Verified Session Active</div>
+                <h1>Hi, It's <span>Evan</span></h1>
+                <h3>I'm an <span>Electrical & Electronics Engineer</span></h3>
+                <p>I am an undergraduate student studying Electrical and Electronics Engineering at NIT Trichy. Right now, my focus sits at the intersection of core hardware fundamentals and analytical problem-solving. My objective is to push past standard coursework—moving beyond passive derivation and into the actual design and debugging of complex electrical systems. I want to build hardware and architectures that do not just meet specifications, but redefine them.</p>
+                <div class="social-icons">
+                    <a href="https://www.linkedin.com/in/evanrony1/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="https://github.com/evanrony1" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SKILLS TAB -->
+        <section id="tab-skills" class="tab-section">
+            <div class="card-flex">
+                <div class="section-header">
+                    <h2>Technical <span>Competencies</span></h2>
+                </div>
+                <div class="grid-layout">
+                    <div class="card">
+                        <h3>Hardware & Circuits</h3>
+                        <p class="card-subtitle">Arduiono and Robotics</p>
+                        <ul>
+                            <li>Coding Arduinos for projects</li>
+                            <li>Breadboard Electronics</li>
+                            <li>Simple motion sensor lights</li>
+                            <li>Line following, Obstacle Avoiding and Balancing Robots</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Software Domain</h3>
+                        <p class="card-subtitle">Programming</p>
+                        <ul>
+                            <li>Python with Pandas and mathplotlib</li>
+                            <li>Html, CSS and JS for webdev</li>
+                            <li>C and cpp basics (in progress)</li>
+                            <li>Basic knowlage of Linux and OS architecture</li>
+                            <li>Data Analytics</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Other Areas</h3>
+                        <p class="card-subtitle">Non technical</p>
+                        <ul>
+                            <li>Enjoy badminton and chess</li>
+                            <li>Photographer</li>
+                            <li>Math entusiast</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. EDUCATION TAB -->
+        <section id="tab-education" class="tab-section">
+            <div class="card-flex">
+                <div class="section-header">
+                    <h2>Academic <span>Background</span></h2>
+                </div>
+                <div class="grid-layout">
+                    <div class="card">
+                        <h3>National Institute of Technology, Trichy</h3>
+                        <p class="card-subtitle">B.Tech in Electrical and Electronics Engineering (EEE) batch of 2030</p>
+                                            </div>
+                   
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. EXPERIENCE TAB -->
+        <section id="tab-experience" class="tab-section">
+            <div class="card-flex">
+                <div class="section-header">
+                    <h2>Technical <span>Experience & Projects</span></h2>
+                </div>
+                <div class="grid-layout">
+                    <div class="card">
+                        <h3>Web Dev</h3>
+                        <p class="card-subtitle">WebOps &mdash; NIT Trichy</p>
+                        <p>Just made this Website :).</p>
+                    </div>
+                    <div class="card">
+                        <h3>Memory Simulator</h3>
+                        <p class="card-subtitle">Coding Project</p>
+                        <p>Made a simple demonstration to show how Memory is stored using Logic gates in python.</p>
+                    </div>
+                     <div class="card">
+                        <h3>Campus Companion</h3>
+                        <p class="card-subtitle">Coding Project</p>
+                        <p>Made an app that allows users to track classes, assingments and most importantly attendance on their phones.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const AUTH_USER = "reviewer@eval.org";
+        const AUTH_PASS = "selection2026";
+        const STORAGE_KEY = "NIT_EVAL_AUTH_STATE";
+
+        const wall = document.getElementById("auth-wall");
+        const app = document.getElementById("portfolio-app");
+        const form = document.getElementById("login-form");
+        const feedback = document.getElementById("auth-feedback");
+        const logoutBtn = document.getElementById("logout-btn");
+        const navLinks = document.querySelectorAll(".nav-tab");
+        const tabSections = document.querySelectorAll(".tab-section");
+
+        function unlock() {
+            document.body.classList.remove("auth-pending");
+            wall.style.display = "none";
+            app.style.display = "block";
+            sessionStorage.setItem(STORAGE_KEY, "authenticated");
+        }
+
+        function lock(msg) {
+            sessionStorage.removeItem(STORAGE_KEY);
+            document.body.classList.add("auth-pending");
+            app.style.display = "none";
+            wall.style.display = "flex";
+            if (msg) feedback.textContent = msg;
+        }
+
+        // Restore auth session on reload
+        if (sessionStorage.getItem(STORAGE_KEY) === "authenticated") {
+            unlock();
+        }
+
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+            feedback.textContent = "";
+
+            const enteredUser = document.getElementById("eval-id").value.trim().toLowerCase();
+            const enteredPass = document.getElementById("eval-key").value.trim();
+
+            if (enteredUser === AUTH_USER && enteredPass === AUTH_PASS) {
+                unlock();
+            } else {
+                feedback.textContent = "Invalid credentials. Use the pre-filled values.";
+            }
+        });
+
+        logoutBtn.addEventListener("click", function() {
+            lock("Session terminated.");
+        });
+
+        // --- TAB SWITCHING LOGIC ---
+        function switchTab(targetId) {
+            tabSections.forEach(section => section.classList.remove("active"));
+            
+
+            navLinks.forEach(link => link.classList.remove("active"));
+
+            const activeSection = document.getElementById(targetId);
+            if (activeSection) {
+                activeSection.classList.add("active");
+            }
+
+            const activeLink = document.querySelector(`.nav-tab[data-target="${targetId}"]`);
+            if (activeLink) {
+                activeLink.classList.add("active");
+            }
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener("click", function() {
+                const targetId = this.getAttribute("data-target");
+                switchTab(targetId);
+            });
+        });
+        document.querySelector(".logo").addEventListener("click", function() {
+            switchTab("tab-home");
+        });
+    </script>
 </body>
 </html>
